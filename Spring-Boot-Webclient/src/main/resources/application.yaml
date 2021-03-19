@@ -1,0 +1,4 @@
+
+spring:
+  webclient:
+    url: 'http://httpbin.org'
