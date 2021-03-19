@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class DeveloperDTO {
 
+    @JsonProperty(value = "id", required = false)
+    private final Long developerId;
+
     @JsonProperty(value = "firstname", required = true)
     private final String firstName;
 

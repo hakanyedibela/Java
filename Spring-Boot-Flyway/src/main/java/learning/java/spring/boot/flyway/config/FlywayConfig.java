@@ -14,6 +14,8 @@ public class FlywayConfig {
      * flyway.migrate.
      */
 
+    /**
+     *
     @Bean
     public FlywayMigrationStrategy flywayMigrationStrategy() {
         return (flyway) -> {
@@ -21,5 +23,5 @@ public class FlywayConfig {
             // Make some useful operations on the migrationService from flyqay
         };
     }
-
+     */
 }

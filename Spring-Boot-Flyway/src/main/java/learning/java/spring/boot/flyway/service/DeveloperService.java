@@ -8,12 +8,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional
 public class DeveloperService {
 
     // With the flyway.migrate() function, you can migrate the sql scripts manually.
@@ -50,7 +53,7 @@ public class DeveloperService {
         return Collections.emptyList();
     }
 
-    public void createNewDeveloper(final DeveloperDTO developerDTO) {
+    public DeveloperEntity createNewDeveloper(final DeveloperDTO developerDTO) {
 
         // All necessary field checks are made in DeveloperDTO
         DeveloperEntity entity = new DeveloperEntity();
@@ -61,7 +64,59 @@ public class DeveloperService {
         entity.setSalary(developerDTO.getSalary());
         entity.setIsInHomeOffice(developerDTO.getIsInHomeOffice());
 
-        developerRepository.save(entity);
+        return developerRepository.save(entity);
     }
 
+    public DeveloperEntity updateExistingDeveloper(final DeveloperDTO developerDTO) {
+
+        var developerToUpdate = developerRepository.findById(developerDTO.getDeveloperId());
+
+        developerToUpdate.ifPresentOrElse(
+                developerEntity -> {
+
+                    developerEntity.setFirstName(developerDTO.getFirstName());
+                    developerEntity.setLastName(developerDTO.getLastName());
+                    developerEntity.setAge(developerDTO.getAge());
+                    developerEntity.setPosition(developerDTO.getPosition());
+                    developerEntity.setSalary(developerDTO.getSalary());
+                    developerEntity.setIsInHomeOffice(developerDTO.getIsInHomeOffice());
+
+                    developerRepository.save(developerEntity);
+                },
+                () -> {
+                    log.info("Can't update developer, because is not existing!");
+                }
+        );
+        return developerToUpdate.get();
+    }
+
+    public Optional<DeveloperEntity> findDeveloperById(final Long developerId) {
+        try {
+
+            return developerRepository.findById(developerId);
+
+        } catch (JpaSystemException jpaSystemException) {
+            log.error("Can't find Developer with ID: " + developerId, jpaSystemException);
+        }
+        return Optional.empty();
+    }
+
+
+    public Optional<DeveloperEntity> deleteDeveloperById(final Long developerId) {
+        try {
+
+            var developerToDelete = developerRepository.findById(developerId);
+
+            developerToDelete.ifPresentOrElse(
+                    developerRepository::delete,
+                    () -> log.error("Something went wrong during the delete operation!")
+            );
+
+            return developerToDelete;
+
+        } catch (JpaSystemException jpaSystemException) {
+            log.error("Can't delete developer with Id: " + developerId, jpaSystemException);
+        }
+        return Optional.empty();
+    }
 }
