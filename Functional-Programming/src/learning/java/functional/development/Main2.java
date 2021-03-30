@@ -20,9 +20,6 @@ public class Main2 {
         Predicate<Developer> predicate = x -> x.getAge() == 33;
         System.out.println(predicate.test(listOfDevelopers.get(1))); // true
 
-        // Operations on streams and parallelStreams never change the original DataStructure
-
-        // Simple filter with Predicate
         listOfDevelopers
                 .stream()
                 .filter(predicate)
@@ -31,7 +28,6 @@ public class Main2 {
                     System.out.println(developer.getFirstName());
                 });
 
-        // add +100 to all salaries
         listOfDevelopers
                 .stream()
                 .map(x -> x.getSalary() + 100)
@@ -40,14 +36,12 @@ public class Main2 {
                     System.out.println(developer);
                 });
 
-        // Joining Example. Write result into var
         var joiningExample = listOfDevelopers
                 .stream()
                 .map(Developer::getFirstName)
                 .collect(Collectors.joining(";"));
         System.out.println(joiningExample);
 
-        // Grouping List over age with groupingBy Function
         listOfDevelopers
                 .stream()
                 .map(Developer::getAge)
@@ -75,22 +69,17 @@ public class Main2 {
         public String getFirstName() {
             return firstName;
         }
-
         public String getLastName() {
             return lastName;
         }
-
         public Integer getAge() {
             return age;
         }
-
         public String getPosition() {
             return position;
         }
-
         public Integer getSalary() {
             return salary;
         }
-
     }
 }
